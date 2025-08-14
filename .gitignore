@@ -1,0 +1,176 @@
+# Archivos y carpetas que no se deben versionar
+
+# Archivos de configuración de Visual Studio
+.vs/
+.vscode/
+
+# Archivos de depuración
+Debug/
+Release/
+
+# Archivos de compilación
+bin/
+obj/
+
+# Archivos de paquetes NuGet
+packages/
+
+# Archivos de configuración de Entity Framework
+Migrations/
+
+# Archivos de logs
+logs/
+
+# Archivos de caché
+*.cache
+
+# Archivos de configuración de la aplicación
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+
+# Archivos de configuración de la base de datos
+database.json
+
+# Archivos de configuración de Swagger
+swagger.json
+
+# Archivos de configuración de la API
+api.json
+
+# Archivos de configuración de la autenticación
+auth.json
+
+# Archivos de configuración de la autorización
+authz.json
+
+# Archivos de configuración de la base de datos de Entity Framework
+efcore.json
+
+# Archivos de configuración de la migración de Entity Framework
+efcore-migrations.json
+
+# Archivos de configuración de la base de datos de SQL Server
+sql-server.json
+
+# Archivos de configuración de la migración de SQL Server
+sql-server-migrations.json
+
+# Archivos de configuración de la base de datos de MySQL
+mysql.json
+
+# Archivos de configuración de la migración de MySQL
+mysql-migrations.json
+
+# Archivos de configuración de la base de datos de PostgreSQL
+postgresql.json
+
+# Archivos de configuración de la migración de PostgreSQL
+postgresql-migrations.json
+
+# Archivos de configuración de la base de datos de Oracle
+oracle.json
+
+# Archivos de configuración de la migración de Oracle
+oracle-migrations.json
+
+# Archivos de configuración de la base de datos de SQLite
+sqlite.json
+
+# Archivos de configuración de la migración de SQLite
+sqlite-migrations.json
+
+# Archivos de configuración de la base de datos de Firebird
+firebird.json
+
+# Archivos de configuración de la migración de Firebird
+firebird-migrations.json
+
+# Archivos de configuración de la base de datos de IBM DB2
+ibm-db2.json
+
+# Archivos de configuración de la migración de IBM DB2
+ibm-db2-migrations.json
+
+# Archivos de configuración de la base de datos de Microsoft Access
+microsoft-access.json
+
+# Archivos de configuración de la migración de Microsoft Access
+microsoft-access-migrations.json
+
+# Archivos de configuración de la base de datos de Microsoft SQL Server
+microsoft-sql-server.json
+
+# Archivos de configuración de la migración de Microsoft SQL Server
+microsoft-sql-server-migrations.json
+
+# Archivos de configuración de la base de datos de MySQL
+mysql.json
+
+# Archivos de configuración de la migración de MySQL
+mysql-migrations.json
+
+# Archivos de configuración de la base de datos de Oracle
+oracle.json
+
+# Archivos de configuración de la migración de Oracle
+oracle-migrations.json
+
+# Archivos de configuración de la base de datos de PostgreSQL
+postgresql.json
+
+# Archivos de configuración de la migración de PostgreSQL
+postgresql-migrations.json
+
+# Archivos de configuración de la base de datos de SQLite
+sqlite.json
+
+# Archivos de configuración de la migración de SQLite
+sqlite-migrations.json
+
+# Archivos de configuración de la base de datos de Firebird
+firebird.json
+
+# Archivos de configuración de la migración de Firebird
+firebird-migrations.json
+
+# Archivos de configuración de la base de datos de IBM DB2
+ibm-db2.json
+
+# Archivos de configuración de la migración de IBM DB2
+ibm-db2-migrations.json
+
+# Archivos de configuración de la base de datos de Microsoft Access
+microsoft-access.json
+
+# Archivos de configuración de la migración de Microsoft Access
+microsoft-access-migrations.json
+
+# Archivos de configuración de la base de datos de Microsoft SQL Server
+microsoft-sql-server.json
+
+# Archivos de configuración de la migración de Microsoft SQL Server
+microsoft-sql-server-migrations.json
+
+# Archivos de configuración de la base de datos de MySQL
+mysql.json
+
+# Archivos de configuración de la migración de MySQL
+mysql-migrations.json
+
+# Archivos de configuración de la base de datos de Oracle
+oracle.json
+
+# Archivos de configuración de la migración de Oracle
+oracle-migrations.json
+
+# Archivos de configuración de la base de datos de PostgreSQL
+postgresql.json
+
+# Archivos de configuración de la migración de PostgreSQL
+postgresql-migrations.json
+
+# Archivos de configuración de la base de datos de SQLite
+sqlite.json
+
+# Arch
