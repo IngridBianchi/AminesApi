@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AminesApi", "AminesApi.csproj", "{AA1FEE2B-AD4E-DD87-D85C-569AE7695EF0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA1FEE2B-AD4E-DD87-D85C-569AE7695EF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA1FEE2B-AD4E-DD87-D85C-569AE7695EF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA1FEE2B-AD4E-DD87-D85C-569AE7695EF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA1FEE2B-AD4E-DD87-D85C-569AE7695EF0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B8DF7F9A-86FA-448C-90EB-C4C1398142E4}
+	EndGlobalSection
+EndGlobal
