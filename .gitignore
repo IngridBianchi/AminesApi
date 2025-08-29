@@ -173,4 +173,30 @@ postgresql-migrations.json
 # Archivos de configuración de la base de datos de SQLite
 sqlite.json
 
-# Arch
+# .NET Core ignorados
+bin/
+obj/
+*.csproj.user
+*.suo
+*.sln.docstates
+
+# Entornos virtuales de Python
+venv/
+env/
+*.pyc
+
+# Configuraciones locales
+appsettings.json
+.env
+
+# Archivos generados
+*.log
+*.bak
+
+# Archivos temporales
+*.tmp
+*.swp
+
+# Sistemas operativos
+.DS_Store
+Thumbs.db

@@ -1,15 +1,10 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build 
-WORKDIR /src
-COPY PickAge.csproj .
-RUN dotnet restore
+FROM python:3.8-slim-buster
+
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
+
 COPY . .
 
-RUN dotnet build "PickAge.csproj" -c Release -o /app/build
-
-RUN dotnet publish -c release -o /app
-
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
-WORKDIR /app
-COPY --from=build /app .
-ENTRYPOINT ["dotnet", "PickAge.dll"]
-
+CMD ["python3", "AgeSelector.py"]

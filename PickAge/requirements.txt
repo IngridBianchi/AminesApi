@@ -1,0 +1,3 @@
+Flask==2.2.2  # Opcional, si decides usar Flask más adelante
+pika==1.3.2   # Cliente de RabbitMQ para Python
+python-dotenv==1.0.0  # Para leer .env
