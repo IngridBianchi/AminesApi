@@ -1,11 +1,11 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.OpenApi;
-using AminesApi.Data;
-using AminesApi.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using SharedLibrary.Data;
 using Oracle.EntityFrameworkCore;
+using AddAdult.Data;
+
+namespace AddAdult;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -79,6 +79,7 @@ app.MapPost("/Add/Member", async (DataContext context, IBlob blob, [FromForm] st
         return Results.Problem($"Error adding member: {ex.Message}");
     }
 })
+
 .WithName("AddMember")
 .WithOpenApi()
 .DisableAntiforgery(); 

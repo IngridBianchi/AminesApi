@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using AminesApi.Models;
+using SharedLibrary.Models;
 
-namespace AminesApi.Data
+namespace SharedLibrary.Data
 {
     public class DataContext : DbContext
     {

@@ -1,4 +1,4 @@
-namespace AminesApi.Models
+namespace SharedLibrary.Models
 {
     public class Adult
     {

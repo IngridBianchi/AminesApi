@@ -11,7 +11,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Oci.Common.Auth;
 
-namespace AminesApi.Data
+namespace SharedLibrary.Data
 {
     public interface IBlob
     {
