@@ -19,7 +19,6 @@ namespace AddMember.Data
         {
             _configuration = configuration;
 
-            // Configuración de la conexión a RabbitMQ
             var factory = new ConnectionFactory
             {
                 HostName = _configuration["RabbitMQ:HostName"],
@@ -30,30 +29,26 @@ namespace AddMember.Data
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
 
-            // Declarar la cola (asegura que exista)
-            _channel.QueueDeclare(queue: _configuration["RabbitMQ:QueueName"],
-                                 durable: false,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
+            _channel.ExchangeDeclare("usuarios_topic", ExchangeType.Topic, durable: true);
+            _channel.QueueDeclare("member_queue", durable: true, exclusive: false, autoDelete: false, arguments: null);
+            _channel.QueueBind("member_queue", "usuarios_topic", "member");
         }
 
         public async Task SendMessageAsync(string name, string lastname, string birthyear)
         {
-            // Crear el cuerpo del mensaje
             var messageBody = $"Name: {name}, Lastname: {lastname}, Birthyear: {birthyear}";
             var body = Encoding.UTF8.GetBytes(messageBody);
 
-            // Publicar el mensaje
-            _channel.BasicPublish(exchange: "",
-                                routingKey: _configuration["RabbitMQ:QueueName"],
-                                basicProperties: null,
-                                body: body);
+            _channel.BasicPublish(
+                exchange: "usuarios_topic",
+                routingKey: "member",
+                basicProperties: null,
+                body: body
+            );
 
-            await Task.CompletedTask; // Simula async para compatibilidad
+            await Task.CompletedTask;
         }
 
-        // Liberar recursos al finalizar
         public void Dispose()
         {
             _channel?.Close();

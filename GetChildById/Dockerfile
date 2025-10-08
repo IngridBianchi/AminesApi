@@ -1,15 +1,26 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build 
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY GetChildById.csproj .
-RUN dotnet restore
-COPY . .
 
-RUN dotnet build "GetChildById.csproj" -c Release -o /app/build
+COPY GetChildById/GetChildById.csproj GetChildById/
+COPY SharedLibrary/SharedLibrary.csproj SharedLibrary/
+RUN dotnet restore GetChildById/GetChildById.csproj
 
-RUN dotnet publish -c release -o /app
+COPY GetChildById/. GetChildById/
+COPY SharedLibrary/. SharedLibrary/
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
+WORKDIR /src/GetChildById
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app .
+
+COPY --from=build /app/publish .
+COPY .oci/wallet /app/wallet
+ENV TNS_ADMIN=/app/wallet
+
 ENTRYPOINT ["dotnet", "GetChildById.dll"]
+
+
+
+
 

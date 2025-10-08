@@ -1,15 +1,24 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build 
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY PickAge.csproj .
-RUN dotnet restore
-COPY . .
 
-RUN dotnet build "PickAge.csproj" -c Release -o /app/build
+COPY AddChildren/AddChildren.csproj AddChildren/
+COPY SharedLibrary/SharedLibrary.csproj SharedLibrary/
+RUN dotnet restore AddChildren/AddChildren.csproj
 
-RUN dotnet publish -c release -o /app
+COPY AddChildren/. AddChildren/
+COPY SharedLibrary/. SharedLibrary/
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
+WORKDIR /src/AddChildren
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app .
-ENTRYPOINT ["dotnet", "PickAge.dll"]
+
+COPY --from=build /app/publish .
+COPY .oci/wallet /app/wallet
+ENV TNS_ADMIN=/app/wallet
+
+ENTRYPOINT ["dotnet", "AddChildren.dll"]
+
+
 

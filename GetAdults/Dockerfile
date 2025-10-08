@@ -1,15 +1,21 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build 
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY GetAdults.csproj .
-RUN dotnet restore
-COPY . .
 
-RUN dotnet build "GetAdults.csproj" -c Release -o /app/build
+COPY GetAdults/GetAdults.csproj GetAdults/
+COPY SharedLibrary/SharedLibrary.csproj SharedLibrary/
+RUN dotnet restore GetAdults/GetAdults.csproj
 
-RUN dotnet publish -c release -o /app
+COPY GetAdults/. GetAdults/
+COPY SharedLibrary/. SharedLibrary/
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
+WORKDIR /src/GetAdults
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app .
-ENTRYPOINT ["dotnet", "GetAdults.dll"]
 
+COPY --from=build /app/publish .
+COPY .oci/wallet /app/wallet
+ENV TNS_ADMIN=/app/wallet
+
+ENTRYPOINT ["dotnet", "GetAdults.dll"]

@@ -12,5 +12,7 @@
     <PackageReference Include="OCI.DotNetSDK.Common" Version="117.0.0" />
     <PackageReference Include="OCI.DotNetSDK.Objectstorage" Version="117.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
   </ItemGroup>
 </Project>
+

@@ -7,6 +7,7 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.9.1" />
     <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.0" />
@@ -16,11 +17,16 @@
     <PackageReference Include="Oracle.EntityFrameworkCore" Version="9.23.90" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj" />
+    <ProjectReference Include="../SharedLibrary/SharedLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="RabbitMQ.Client">
       <HintPath>$(UserProfile)/.nuget/packages/rabbitmq.client/7.1.2/lib/net8.0/RabbitMQ.Client.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+  <None Update="appsettings.json">
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
 </Project>

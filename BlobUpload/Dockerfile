@@ -1,15 +1,23 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build 
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY BlobUpload.csproj .
-RUN dotnet restore
-COPY . .
 
-RUN dotnet build "BlobUpload.csproj" -c Release -o /app/build
+COPY BlobUpload/BlobUpload.csproj BlobUpload/
+COPY SharedLibrary/SharedLibrary.csproj SharedLibrary/
 
-RUN dotnet publish -c release -o /app
+RUN dotnet restore BlobUpload/BlobUpload.csproj
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
+COPY BlobUpload/ BlobUpload/
+COPY SharedLibrary/ SharedLibrary/
+
+COPY BlobUpload/appsettings.json BlobUpload/
+COPY BlobUpload/appsettings.Development.json BlobUpload/
+
+RUN dotnet publish BlobUpload/BlobUpload.csproj -c Release -o /app
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app .
-ENTRYPOINT ["dotnet", "BlobUpload.dll"]
+COPY .oci/wallet /app/wallet
+ENV TNS_ADMIN=/app/wallet
 
+ENTRYPOINT ["dotnet", "BlobUpload.dll"]

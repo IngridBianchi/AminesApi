@@ -73,6 +73,7 @@ oracle.json
 
 # Archivos de configuración de la migración de Oracle
 oracle-migrations.json
+.oci
 
 # Archivos de configuración de la base de datos de SQLite
 sqlite.json
@@ -187,6 +188,7 @@ env/
 
 # Configuraciones locales
 appsettings.json
+appsettings.Development.json
 .env
 
 # Archivos generados

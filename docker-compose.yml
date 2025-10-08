@@ -1,0 +1,121 @@
+version: '3.7'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - 5673:5672    # Puerto para apps
+      - 15672:15672  # UI de administración
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  getadults:
+    build:
+      context: .
+      dockerfile: GetAdults/Dockerfile
+    image: getadults
+    ports:
+      - 5100:8080
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  getadultbyid:
+    build:
+      context: .
+      dockerfile: GetAdultById/Dockerfile
+    image: getadultbyid
+    ports:
+      - 5200:8080
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  addmember:
+    build:
+      context: .
+      dockerfile: AddMember/Dockerfile
+    image: addmember
+    ports:
+      - 5300:8080
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  getchildren:
+    build:
+      context: .
+      dockerfile: GetChildren/Dockerfile
+    image: getchildren
+    ports:
+      - 5400:8080
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  getchildbyid:
+    build:
+      context: .
+      dockerfile: GetChildById/Dockerfile
+    image: getchildbyid
+    ports:
+      - 5500:8080
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  blobupload:
+    build:
+      context: .
+      dockerfile: BlobUpload/Dockerfile
+    image: blobupload
+    ports:
+      - 5600:8080
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  # Workers/consumidores (no exponen puertos)
+  pickage:
+    build:
+      context: ./PickAge
+      dockerfile: Dockerfile
+    env_file:
+      - ./PickAge/.env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  addadult:
+    build:
+      context: .
+      dockerfile: AddAdult/Dockerfile
+    image: addadult
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  addchildren:
+    build:
+      context: .
+      dockerfile: AddChildren/Dockerfile
+    image: addchildren
+    depends_on:
+      rabbitmq:
+        condition: service_healthy

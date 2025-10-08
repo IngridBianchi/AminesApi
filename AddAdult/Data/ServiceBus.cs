@@ -4,9 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SharedLibrary.Data;
 using SharedLibrary.Models;
-using System.Threading;
-using System.Threading.Tasks;
-using System;
 
 namespace AddAdult.Data
 {
@@ -31,84 +28,91 @@ namespace AddAdult.Data
             {
                 _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
                 _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-                if (string.IsNullOrEmpty(_configuration["RabbitMQ:Host"]))
+
+                var rabbitSection = _configuration.GetSection("RabbitMQ");
+                var host = rabbitSection["Host"];
+                if (string.IsNullOrEmpty(host))
                     throw new InvalidOperationException("RabbitMQ:Host no configurado en appsettings.json");
+
+                Console.WriteLine($"✅ RabbitMQ Host configurado: {host}");
             }
 
             public async Task ProcessMessagesAsync(CancellationToken cancellationToken)
             {
+                var rabbitSection = _configuration.GetSection("RabbitMQ");
+
                 var factory = new ConnectionFactory
                 {
-                    HostName = _configuration["RabbitMQ:Host"] ?? "localhost",
-                    UserName = _configuration["RabbitMQ:Username"] ?? "guest",
-                    Password = _configuration["RabbitMQ:Password"] ?? "guest"
+                    HostName = rabbitSection["Host"] ?? "rabbitmq",
+                    UserName = rabbitSection["UserName"] ?? "guest",
+                    Password = rabbitSection["Password"] ?? "guest",
                 };
 
                 _connection = await factory.CreateConnectionAsync();
                 _channel = await _connection.CreateChannelAsync();
 
-                await _channel.ExchangeDeclareAsync(exchange: "usuarios_topic", type: "topic", durable: false);
-                var queueResult = await _channel.QueueDeclareAsync();
-                _queueName = queueResult.QueueName;
-                await _channel.QueueBindAsync(queue: _queueName, exchange: "usuarios_topic", routingKey: "adult");
+                var exchange = rabbitSection["Exchange"] ?? "usuarios_topic";
+                _queueName = rabbitSection.GetSection("Queues")["Adult"] ?? "adult_queue";
+
+                Console.WriteLine($"🔄 Conectando a exchange: {exchange}, cola: {_queueName}");
+
+                await _channel.ExchangeDeclareAsync(exchange: exchange, type: "topic", durable: true);
+                await _channel.QueueDeclareAsync(queue: _queueName, durable: true, exclusive: false, autoDelete: false);
+                await _channel.QueueBindAsync(queue: _queueName, exchange: exchange, routingKey: "adult");
 
                 _consumer = new AsyncEventingBasicConsumer(_channel);
                 _consumer.ReceivedAsync += async (model, ea) =>
                 {
                     var body = ea.Body.ToArray();
                     var message = System.Text.Encoding.UTF8.GetString(body);
-                    Console.WriteLine($"Received: {message} with routing key: {ea.RoutingKey}");
+                    Console.WriteLine($"📩 Received: {message} with routing key: {ea.RoutingKey}");
 
-                    using (var scope = _serviceProvider.CreateScope())
+                    using var scope = _serviceProvider.CreateScope();
+                    var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+                    try
                     {
-                        var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-                        try
-                        {
-                            string[] fields = message.Split(',');
-                            string name = string.Empty;
-                            string lastname = string.Empty;
-                            int birthyear = 0;
-                            string imageUrl = string.Empty;
+                        string[] fields = message.Split(',');
+                        string name = string.Empty;
+                        string lastname = string.Empty;
+                        int birthyear = 0;
 
-                            foreach (string field in fields)
+                        foreach (string field in fields)
+                        {
+                            string[] keyValue = field.Trim().Split(':');
+                            if (keyValue.Length == 2)
                             {
-                                string[] keyValue = field.Trim().Split(':');
-                                if (keyValue.Length == 2)
-                                {
-                                    string key = keyValue[0].Trim();
-                                    string value = keyValue[1].Trim();
-                                    if (key == "Name") name = value;
-                                    else if (key == "Lastname") lastname = value;
-                                    else if (key == "Birthyear") birthyear = int.Parse(value);
-                                }
+                                string key = keyValue[0].Trim();
+                                string value = keyValue[1].Trim();
+                                if (key == "Name") name = value;
+                                else if (key == "Lastname") lastname = value;
+                                else if (key == "Birthyear") birthyear = int.Parse(value);
                             }
-
-                            imageUrl = $"{name.ToLower()}{lastname.ToLower()}.jpg";
-
-                            var adult = new Adult
-                            {
-                                Name = name,
-                                Lastname = lastname,
-                                BirthYear = birthyear,
-                                ImageURL = imageUrl
-                            };
-
-                            context.Adults.Add(adult);
-                            await context.SaveChangesAsync();
-                            Console.WriteLine("New adult member has been successfully added");
                         }
-                        catch (Exception e)
+
+                        var imageUrl = $"{name.ToLower()}{lastname.ToLower()}.jpg";
+
+                        var adult = new Adult
                         {
-                            Console.WriteLine($"Error processing message: {e.Message}");
-                        }
+                            Name = name,
+                            Lastname = lastname,
+                            BirthYear = birthyear,
+                            ImageURL = imageUrl
+                        };
 
-                        if (_channel != null)
-                        {
-                            await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
-                        }
+                        context.Adults.Add(adult);
+                        await context.SaveChangesAsync();
+                        Console.WriteLine("✅ New adult member has been successfully added");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"❌ Error processing message: {e.Message}");
                     }
 
-
+                    if (_channel != null)
+                    {
+                        await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
+                    }
                 };
 
                 await _channel.BasicConsumeAsync(queue: _queueName, autoAck: false, consumer: _consumer);

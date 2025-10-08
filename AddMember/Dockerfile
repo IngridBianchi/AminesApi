@@ -1,15 +1,23 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build 
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY AddMember.csproj .
-RUN dotnet restore
-COPY . .
 
-RUN dotnet build "AddMember.csproj" -c Release -o /app/build
+# Copia solo los archivos de proyecto
+COPY AddMember/AddMember.csproj AddMember/
+COPY SharedLibrary/SharedLibrary.csproj SharedLibrary/
 
-RUN dotnet publish -c release -o /app
+# Restaura dependencias
+RUN dotnet restore AddMember/AddMember.csproj
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
+# Copia solo el código fuente necesario
+COPY AddMember/. AddMember/
+COPY SharedLibrary/. SharedLibrary/
+
+WORKDIR /src/AddMember
+RUN rm -rf ./bin ./obj ../SharedLibrary/bin ../SharedLibrary/obj
+RUN dotnet build AddMember.csproj -c Release -o /app/build
+RUN dotnet publish -c Release -o /app
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app .
 ENTRYPOINT ["dotnet", "AddMember.dll"]
-
